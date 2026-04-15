@@ -25,6 +25,27 @@ SELECT
 );
 GO
 
+CREATE FUNCTION [Catalog].fnSearchBooksByPublicationYear 
+(
+  @year INT
+)
+RETURNS @DataSeleccionada TABLE (
+  idBook INT,
+  title VARCHAR(250),
+  publicationYear INT
+)
+AS BEGIN 
+  INSERT @DataSeleccionada 
+    SELECT
+      b.idBook,
+      b.title AS BookTitle,
+      b.publicationYear
+    FROM [Catalog].tblBooks b
+    WHERE b.publicationYear > @year
+  RETURN
+END;
+GO
+
 SELECT * FROM [Catalog].fnSearchBooksByPublicationYear(1900);
 GO
 
@@ -45,16 +66,16 @@ RETURN
         b.title,
         b.publicationYear,
         (
-            SELECT 
-                a.fullName,
-                n.name AS nationalityName
-            FROM [Catalog].tblBookAuthors ba
-            INNER JOIN [Catalog].tblAuthors a 
-                ON a.idAuthor = ba.idAuthor
-            INNER JOIN [Catalog].tblNationalities n 
-                ON n.idNationality = a.idNationality
-            WHERE ba.idBook = b.idBook
-            FOR JSON PATH
+          SELECT 
+              a.fullName,
+              n.name AS nationalityName
+          FROM [Catalog].tblBookAuthors ba
+          INNER JOIN [Catalog].tblAuthors a 
+              ON a.idAuthor = ba.idAuthor
+          INNER JOIN [Catalog].tblNationalities n 
+              ON n.idNationality = a.idNationality
+          WHERE ba.idBook = b.idBook
+          FOR JSON PATH
         ) AS authors
         
     FROM [Catalog].tblBooks b
