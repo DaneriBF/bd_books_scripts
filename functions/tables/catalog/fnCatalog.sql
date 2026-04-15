@@ -9,6 +9,7 @@ GO
   @param year: El año a partir del cual se desean obtener los libros.
   @return: Una tabla con los detalles de los libros publicados después del año especificado, incluyendo título, género, año de publicación y nombre del editor.
 */
+/*
 CREATE FUNCTION [Catalog].fnSearchBooksByPublicationYear 
 (
   @year INT
@@ -24,6 +25,7 @@ SELECT
   WHERE b.publicationYear > @year
 );
 GO
+*/
 
 CREATE FUNCTION [Catalog].fnSearchBooksByPublicationYear 
 (
