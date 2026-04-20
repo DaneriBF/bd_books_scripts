@@ -97,5 +97,30 @@ USE BdTest
   FROM [Catalog].tblBooks b
   WHERE b.publicationYear > 1500
   GROUP BY b.title
+GO
 
-  
+----------------------------------------------------------------------------
+DROP FUNCTION IF EXISTS [Catalog].fnShowAuthorsPaginated;
+GO
+
+CREATE FUNCTION [Catalog].fnShowAuthorsPaginated (
+  @pageSize INT,
+  @pageNumber INT
+)
+RETURNS TABLE 
+AS 
+RETURN (
+  SELECT a.idAuthor, a.fullName, n.name as nationality
+  FROM [Catalog].tblAuthors a
+    INNER JOIN [Catalog].tblNationalities n
+      ON n.idNationality = a.idNationality
+  ORDER BY idAuthor ASC
+  OFFSET (@pageNumber - 1) * @pageSize ROWS
+  FETCH NEXT @pageSize ROWS ONLY
+);
+GO
+
+SELECT * FROM [Catalog].fnShowAuthorsPaginated(10,2);
+GO
+
+SELECT count(*) as totalItems FROM [Catalog].tblAuthors;
